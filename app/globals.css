@@ -108,6 +108,40 @@ a {
   border-color: var(--border-soft);
 }
 
+.mobile-nav-panel {
+  max-height: 0;
+  overflow: hidden;
+  border-top: 1px solid transparent;
+  background: var(--nav-bg);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition:
+    max-height 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.mobile-nav-panel-open {
+  max-height: 320px;
+  border-color: var(--border-soft);
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.mobile-nav-panel a {
+  border: 1px solid transparent;
+}
+
+.mobile-nav-panel a:hover,
+.mobile-nav-panel a:focus-visible {
+  border-color: var(--border-soft);
+  background: var(--panel-soft);
+  outline: none;
+}
+
 .glass {
   background: var(--panel);
   border: 1px solid var(--border-soft);
@@ -229,6 +263,30 @@ a {
 .code-cube {
   animation: cube-float 4.8s ease-in-out infinite;
   transform-style: preserve-3d;
+}
+
+.scene-fallback {
+  background: var(--scene-surface);
+}
+
+.scene-fallback .code-orbit {
+  border: 1px solid color-mix(in srgb, var(--mint) 38%, transparent);
+}
+
+.scene-fallback .code-orbit-slow {
+  border-color: color-mix(in srgb, var(--aqua) 28%, transparent);
+}
+
+.scene-fallback .code-cube {
+  border: 1px solid color-mix(in srgb, var(--mint) 52%, transparent);
+  background: color-mix(in srgb, var(--mint) 12%, transparent);
+  box-shadow: 0 0 60px color-mix(in srgb, var(--mint) 24%, transparent);
+}
+
+.scene-fallback-token {
+  border: 1px solid var(--border-soft);
+  background: var(--panel-soft);
+  color: var(--text-muted);
 }
 
 .code-scene-root {

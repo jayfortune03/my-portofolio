@@ -3,6 +3,7 @@
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import CloseIcon from "@mui/icons-material/Close";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import DescriptionIcon from "@mui/icons-material/Description";
@@ -11,6 +12,7 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstructions";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import MenuIcon from "@mui/icons-material/Menu";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
 import SchoolIcon from "@mui/icons-material/School";
@@ -29,11 +31,23 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { CodeSceneFallback } from "./CodeSceneFallback";
+import {
+  achievements,
+  cvFiles,
+  experiences,
+  heroStats,
+  navLinks,
+  profileLinks,
+  projects,
+  stackGroups,
+  type StackGroup,
+} from "../data/portfolio";
 
 const CodeScene = dynamic(() => import("./CodeScene"), {
   ssr: false,
-  loading: () => <div className="h-full w-full animate-pulse bg-[#0c1916]" />,
+  loading: () => <CodeSceneFallback />,
 });
 
 type ThemeMode = "dark" | "light";
@@ -92,188 +106,11 @@ function makeTheme(mode: ThemeMode) {
   });
 }
 
-const experiences = [
-  {
-    role: "Frontend Developer",
-    company: "PLN Icon Plus",
-    period: "Oct 2025 - Present",
-    signal: "Enterprise micro-frontends",
-    body: "Modernizing internal CRM, metering, route management, and financial reporting systems with Vue 3, Vite, TypeScript, Tailwind, Ant Design Vue, REST APIs, JWT auth, and Module Federation.",
-  },
-  {
-    role: "Lead Fullstack Engineer",
-    company: "Amani Group Indonesia",
-    period: "Sep 2024 - Sep 2025",
-    signal: "Real estate operations platform",
-    body: "Led REM, partner sales, supplier, and contractor platforms using Next.js, Express, NestJS, Golang, PostgreSQL, Material UI, GCP, Xendit, TanStack Query, and Server-Sent Events.",
-  },
-  {
-    role: "Lead Fullstack Engineer",
-    company: "HappyHomes",
-    period: "Sep 2023 - Sep 2024",
-    signal: "CRM and mobile QC systems",
-    body: "Built property CRM flows, payment tracking, dashboards, and React Native quality-control tooling with Express, PostgreSQL, PocketBase, GCP, and real-time updates.",
-  },
-  {
-    role: "Fullstack Engineer",
-    company: "Marketa Technology Indonesia",
-    period: "Jun 2022 - Sep 2023",
-    signal: "Chat CRM across web and mobile",
-    body: "Delivered Vue 2, Express, PostgreSQL, Socket, Firebase Cloud Messaging, WhatsApp API, CapacitorJS, and GCP architecture for property sales and customer-support workflows.",
-  },
-  {
-    role: "Frontend Engineer",
-    company: "Growth and Wealth Capital",
-    period: "Sep 2021 - Jun 2022",
-    signal: "First production CRM foundation",
-    body: "Developed Vue 2 CRM interfaces with Vuex, Vuetify, Tailwind, and WhatsApp API integrations for sales team communication.",
-  },
-];
-
-const projects = [
-  {
-    name: "Real Estate Management",
-    type: "Developer operations system",
-    description:
-      "Land acquisition, permit tracking, construction progress, procurement, dashboards, and SSE status monitoring for property developers.",
-    stack: ["Next.js", "Express.ts", "TypeScript", "PostgreSQL", "SSE", "GCP"],
-  },
-  {
-    name: "Amani Supplier",
-    type: "Material Management & Admin Platform | Mar 2024 - May 2024",
-    description:
-      "Internal admin platform for construction material inventory, product catalog maintenance, real-time contractor order tracking, and centralized logistics visibility for procurement and construction teams.",
-    stack: [
-      "Next.js",
-      "TypeScript",
-      "NestJS",
-      "PostgreSQL",
-      "Material UI",
-      "SSE",
-    ],
-  },
-  {
-    name: "Amani Contractor",
-    type: "Construction material commerce",
-    description:
-      "Contractor-facing purchasing flow connected to supplier inventory, real-time material tracking, clean backend architecture, and Xendit payment integration.",
-    stack: ["Next.js", "Golang", "Gin", "PostgreSQL", "Material UI", "Xendit"],
-  },
-  {
-    name: "HappyHomes CRM",
-    type: "Property sales CRM",
-    description:
-      "Order management, customer tracking, transaction dashboards, and real-time payment tracking designed to avoid conflicting sales operations.",
-    stack: ["React", "Express", "TanStack Query", "SSE", "PocketBase", "GCP"],
-  },
-  {
-    name: "QC Mobile",
-    type: "On-site inspection app",
-    description:
-      "React Native app for construction quality checks, photo verification, mobile camera workflows, and backend inspection data processing.",
-    stack: ["React Native", "TypeScript", "Express", "PostgreSQL", "GCP"],
-  },
-  {
-    name: "Marketa Chat",
-    type: "CRM communication platform",
-    description:
-      "CRM web and mobile system with chat-based lead tracking, customer profiling, push notifications, and WhatsApp API communication.",
-    stack: [
-      "Vue 2",
-      "Express",
-      "Socket",
-      "Firebase",
-      "CapacitorJS",
-      "PostgreSQL",
-    ],
-  },
-  {
-    name: "AP2T / ACMT / RTR",
-    type: "Enterprise internal modules",
-    description:
-      "CRM, metering, route-base meter, and reporting modules integrated into host apps through micro-frontend architecture.",
-    stack: [
-      "Vue 3",
-      "Vite",
-      "Module Federation",
-      "Tailwind",
-      "REST API",
-      "JWT",
-    ],
-  },
-];
-
-const stackGroups = [
-  {
-    label: "Frontend",
-    icon: <DataObjectIcon />,
-    items: [
-      "React",
-      "Next.js",
-      "Vue.js",
-      "TypeScript",
-      "Tailwind",
-      "Material UI",
-      "Ant Design Vue",
-      "Vite",
-    ],
-  },
-  {
-    label: "Backend",
-    icon: <StorageIcon />,
-    items: [
-      "Node.js",
-      "Express.js",
-      "NestJS",
-      "Golang",
-      "Gin",
-      "REST API",
-      "Clean Architecture",
-    ],
-  },
-  {
-    label: "Mobile & Desktop",
-    icon: <PhoneIphoneIcon />,
-    items: [
-      "React Native",
-      "CapacitorJS",
-      "Electron",
-      "Firebase Cloud Messaging",
-    ],
-  },
-  {
-    label: "Cloud & Data",
-    icon: <IntegrationInstructionsIcon />,
-    items: [
-      "PostgreSQL",
-      "PocketBase",
-      "CouchDB",
-      "GCP",
-      "Docker",
-      "Xendit",
-      "JWT",
-      "OAuth",
-    ],
-  },
-];
-
-const achievements = [
-  "Migrated PocketBase data into PostgreSQL through an ETL pipeline while preserving data integrity.",
-  "Introduced scalable micro-frontend architecture for enterprise internal platforms.",
-  "Architected SSE-based payment and material tracking systems to reduce transaction conflicts.",
-  "Led engineering teams and mentored junior developers around clean code practices.",
-];
-
-const cvFiles = {
-  pdf: "/cv/nicholas-fortune-cv.pdf",
-  certificate: "/certificates/hacktiv8-full-stack-javascript-immersive.pdf",
-};
-
-const profileLinks = {
-  email: "mailto:nfortune03@gmail.com",
-  github: "https://github.com/jayfortune03",
-  linkedin: "https://www.linkedin.com/in/nicholas-fortune/",
-  whatsapp: "https://wa.me/6287741029000",
+const stackIcons: Record<StackGroup["icon"], ReactNode> = {
+  frontend: <DataObjectIcon />,
+  backend: <StorageIcon />,
+  mobile: <PhoneIphoneIcon />,
+  cloud: <IntegrationInstructionsIcon />,
 };
 
 const fadeUp = {
@@ -283,6 +120,10 @@ const fadeUp = {
 
 export default function PortfolioPage() {
   const [mode, setMode] = useState<ThemeMode>("dark");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [richSceneEnabled, setRichSceneEnabled] = useState(false);
+  const [sceneInView, setSceneInView] = useState(true);
+  const heroVisualRef = useRef<HTMLDivElement>(null);
   const theme = useMemo(() => makeTheme(mode), [mode]);
 
   useEffect(() => {
@@ -303,6 +144,82 @@ export default function PortfolioPage() {
     window.localStorage.setItem("portfolio-theme", mode);
   }, [mode]);
 
+  useEffect(() => {
+    const hasWebGLSupport = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        return Boolean(
+          window.WebGLRenderingContext &&
+            (canvas.getContext("webgl") || canvas.getContext("experimental-webgl")),
+        );
+      } catch {
+        return false;
+      }
+    };
+
+    const updateRichScenePreference = () => {
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const narrowScreen = window.matchMedia("(max-width: 767px)").matches;
+      const lowCoreCount = navigator.hardwareConcurrency ? navigator.hardwareConcurrency <= 4 : false;
+      const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
+      const lowMemory = typeof deviceMemory === "number" ? deviceMemory <= 4 : false;
+
+      setRichSceneEnabled(
+        hasWebGLSupport() && !reducedMotion && !narrowScreen && !lowCoreCount && !lowMemory,
+      );
+    };
+
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const screenQuery = window.matchMedia("(max-width: 767px)");
+
+    updateRichScenePreference();
+    motionQuery.addEventListener("change", updateRichScenePreference);
+    screenQuery.addEventListener("change", updateRichScenePreference);
+
+    return () => {
+      motionQuery.removeEventListener("change", updateRichScenePreference);
+      screenQuery.removeEventListener("change", updateRichScenePreference);
+    };
+  }, []);
+
+  useEffect(() => {
+    const heroVisual = heroVisualRef.current;
+
+    if (!heroVisual || !("IntersectionObserver" in window)) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setSceneInView(entry.isIntersecting);
+      },
+      {
+        rootMargin: "180px",
+        threshold: 0.08,
+      },
+    );
+
+    observer.observe(heroVisual);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      return;
+    }
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [mobileMenuOpen]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -315,15 +232,16 @@ export default function PortfolioPage() {
             <a
               href="#home"
               className="font-mono text-sm font-bold tracking-normal text-[#7ef7b9]"
+              onClick={() => setMobileMenuOpen(false)}
             >
               NF.dev
             </a>
             <div className="hidden items-center gap-6 text-sm text-white/72 md:flex">
-              <a href="#journey">Journey</a>
-              <a href="#projects">Projects</a>
-              <a href="#stack">Stack</a>
-              <a href="#certification">Certification</a>
-              <a href="#contact">Contact</a>
+              {navLinks.map((link) => (
+                <a key={link.href} href={link.href}>
+                  {link.label}
+                </a>
+              ))}
             </div>
             <div className="flex items-center gap-2">
               <Tooltip
@@ -364,6 +282,34 @@ export default function PortfolioPage() {
               >
                 WhatsApp
               </Button>
+              <IconButton
+                aria-controls="mobile-navigation"
+                aria-expanded={mobileMenuOpen}
+                aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                className="md:!hidden"
+                color="primary"
+                onClick={() => setMobileMenuOpen((current) => !current)}
+                size="small"
+              >
+                {mobileMenuOpen ? <CloseIcon fontSize="small" /> : <MenuIcon fontSize="small" />}
+              </IconButton>
+            </div>
+          </div>
+          <div
+            id="mobile-navigation"
+            className={`mobile-nav-panel md:hidden ${mobileMenuOpen ? "mobile-nav-panel-open" : ""}`}
+          >
+            <div className="mx-auto grid max-w-[1500px] gap-2 px-5 pb-4">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="rounded-md px-3 py-3 text-sm font-bold text-white/78"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </a>
+              ))}
             </div>
           </div>
         </nav>
@@ -410,11 +356,7 @@ export default function PortfolioPage() {
               </Button>
             </div>
             <div className="mt-10 grid max-w-2xl grid-cols-3 gap-3">
-              {[
-                ["4+", "years"],
-                ["12+", "major builds"],
-                ["Full", "stack scope"],
-              ].map(([value, label]) => (
+              {heroStats.map(([value, label]) => (
                 <div key={label} className="glass rounded-lg px-4 py-5">
                   <div className="font-mono text-2xl font-black text-[#7ef7b9]">
                     {value}
@@ -426,13 +368,18 @@ export default function PortfolioPage() {
           </motion.div>
 
           <motion.div
+            ref={heroVisualRef}
             data-testid="hero-visual"
             className="glass relative h-[410px] overflow-hidden rounded-lg lg:h-[560px]"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, delay: 0.12 }}
           >
-            <CodeScene mode={mode} />
+            {richSceneEnabled ? (
+              <CodeScene isActive={sceneInView} mode={mode} />
+            ) : (
+              <CodeSceneFallback />
+            )}
           </motion.div>
         </section>
 
@@ -530,7 +477,7 @@ export default function PortfolioPage() {
                 className="glass flex h-full flex-col rounded-lg p-6"
               >
                 <div className="flex items-center gap-3 text-[#7ef7b9]">
-                  {group.icon}
+                  {stackIcons[group.icon]}
                   <h3 className="text-xl font-black text-white">
                     {group.label}
                   </h3>

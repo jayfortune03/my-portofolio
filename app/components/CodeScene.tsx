@@ -4,128 +4,20 @@ import { Float, Html, Line, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Component, type ErrorInfo, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import type { Group } from "three";
-
-type JourneyNode = {
-  id: string;
-  year: string;
-  title: string;
-  stack: string;
-  description: string;
-  details: string[];
-  tech: string[];
-  color: string;
-  position: [number, number, number];
-  shape: "box" | "sphere" | "octa" | "mobile" | "modules";
-};
+import { CodeSceneFallback } from "./CodeSceneFallback";
+import { journeyNodes, type JourneyNode } from "../data/portfolio";
 
 type RenderProfile = "standard" | "lite";
 type SceneMode = "dark" | "light";
 
-const journeyNodes: JourneyNode[] = [
-  {
-    id: "marketa-chat",
-    year: "2022",
-    title: "Marketa Chat",
-    stack: "Vue / Express",
-    description: "CRM communication platform for property sales and customer support.",
-    details: [
-      "Built chat-based lead tracking and customer profiling workflows.",
-      "Integrated Firebase Cloud Messaging and WhatsApp API communication.",
-      "Converted the web app into cross-platform mobile delivery with CapacitorJS.",
-    ],
-    tech: ["Vue 2", "Express", "Socket", "Firebase", "CapacitorJS", "PostgreSQL"],
-    color: "#7dd3fc",
-    position: [-3.25, -0.28, 0.35],
-    shape: "box",
-  },
-  {
-    id: "qc-mobile",
-    year: "2023",
-    title: "QC Mobile",
-    stack: "React Native",
-    description: "Mobile quality-control app for construction site inspection and photo verification.",
-    details: [
-      "Supported on-site building QC audits from project locations.",
-      "Connected inspection findings to backend services and real estate operations.",
-      "Implemented mobile camera and verification workflows with TypeScript.",
-    ],
-    tech: ["React Native", "TypeScript", "Express", "PostgreSQL", "GCP"],
-    color: "#fb7185",
-    position: [-1.95, 0.28, -0.35],
-    shape: "mobile",
-  },
-  {
-    id: "happyhomes-crm",
-    year: "2024",
-    title: "HappyHomes CRM",
-    stack: "React / SSE",
-    description: "Property CRM for bookings, customer tracking, dashboarding, and payment monitoring.",
-    details: [
-      "Built order management and customer tracking for property sales operations.",
-      "Implemented real-time payment tracking with Server-Sent Events.",
-      "Created dashboard views for transactions, sales progress, and customer activity.",
-    ],
-    tech: ["React", "Express", "TanStack Query", "SSE", "PostgreSQL", "PocketBase"],
-    color: "#f8d66d",
-    position: [-0.65, -0.16, 0.45],
-    shape: "octa",
-  },
-  {
-    id: "real-estate-management",
-    year: "2024",
-    title: "REM Platform",
-    stack: "Next / SSE",
-    description: "Real estate management system for developer operations from land to procurement.",
-    details: [
-      "Covered land acquisition, permits, construction progress, and procurement workflows.",
-      "Used typed frontend and backend architecture for maintainability.",
-      "Enabled real-time authentication and status monitoring with SSE.",
-    ],
-    tech: ["Next.js", "Express.ts", "TypeScript", "PostgreSQL", "SSE", "GCP"],
-    color: "#7ef7b9",
-    position: [0.75, 0.34, -0.28],
-    shape: "sphere",
-  },
-  {
-    id: "amani-supplier",
-    year: "2024",
-    title: "Amani Supplier",
-    stack: "Next / NestJS",
-    description: "Material Management & Admin Platform for construction inventory and contractor operations.",
-    details: [
-      "Built the admin system for uploading and maintaining product catalogs available to contractors.",
-      "Tracked contractor material orders in real time with a centralized logistics and supply-flow view.",
-      "Improved inventory visibility and coordination between procurement and construction teams.",
-    ],
-    tech: ["Next.js", "TypeScript", "NestJS", "PostgreSQL", "Material UI", "SSE"],
-    color: "#38bdf8",
-    position: [2.0, -0.14, 0.32],
-    shape: "modules",
-  },
-  {
-    id: "micro-fe",
-    year: "2025",
-    title: "Micro-FE",
-    stack: "Vue 3 / Vite",
-    description: "Enterprise internal modules integrated into host applications through micro-frontend architecture.",
-    details: [
-      "Integrated CRM, metering, route management, and reporting modules.",
-      "Standardized reusable UI patterns for enterprise frontend teams.",
-      "Optimized internal applications for high-traffic operational users.",
-    ],
-    tech: ["Vue 3", "Vite", "Module Federation", "Tailwind", "REST API", "JWT"],
-    color: "#a78bfa",
-    position: [3.25, 0.2, -0.22],
-    shape: "modules",
-  },
-];
-
 function ExperienceJourney({
+  isActive,
   selectedId,
   onSelect,
   renderProfile,
   mode,
 }: {
+  isActive: boolean;
   selectedId: string;
   onSelect: (node: JourneyNode) => void;
   renderProfile: RenderProfile;
@@ -139,7 +31,7 @@ function ExperienceJourney({
   );
 
   useFrame((state, delta) => {
-    if (isLite) {
+    if (isLite || !isActive) {
       return;
     }
 
@@ -156,9 +48,9 @@ function ExperienceJourney({
       {journeyNodes.map((node, index) => (
         <Float
           key={node.title}
-          speed={isLite ? 0 : 1.15 + index * 0.08}
-          rotationIntensity={isLite ? 0 : 0.22}
-          floatIntensity={isLite ? 0 : 0.35}
+          speed={isLite || !isActive ? 0 : 1.15 + index * 0.08}
+          rotationIntensity={isLite || !isActive ? 0 : 0.22}
+          floatIntensity={isLite || !isActive ? 0 : 0.35}
         >
           <group position={node.position}>
             <NodeMesh node={node} selected={selectedId === node.id} onSelect={onSelect} />
@@ -325,7 +217,13 @@ function getRenderProfile(): RenderProfile {
   return reducedMotion || narrowScreen || lowCoreCount || lowMemory ? "lite" : "standard";
 }
 
-export default function CodeScene({ mode }: { mode: SceneMode }) {
+export default function CodeScene({
+  isActive,
+  mode,
+}: {
+  isActive: boolean;
+  mode: SceneMode;
+}) {
   const [canUseWebGL, setCanUseWebGL] = useState<boolean | null>(null);
   const [renderProfile, setRenderProfile] = useState<RenderProfile>("lite");
   const [selectedId, setSelectedId] = useState(journeyNodes[3].id);
@@ -360,7 +258,7 @@ export default function CodeScene({ mode }: { mode: SceneMode }) {
           camera={{ position: [0, 1.45, 6.35], fov: 48 }}
           dpr={[1, renderProfile === "lite" ? 1 : 1.5]}
           fallback={<CodeSceneFallback />}
-          frameloop={renderProfile === "lite" ? "demand" : "always"}
+          frameloop={renderProfile === "lite" || !isActive ? "demand" : "always"}
           gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
           onCreated={({ gl }) => gl.setClearColor(mode === "light" ? "#f7fbf8" : "#07100d", 1)}
         >
@@ -368,8 +266,14 @@ export default function CodeScene({ mode }: { mode: SceneMode }) {
           <ambientLight intensity={mode === "light" ? 1.25 : 0.7} />
           <pointLight position={[3, 4, 4]} intensity={mode === "light" ? 46 : 70} color={mode === "light" ? "#047857" : "#7ef7b9"} />
           <pointLight position={[-4, -1, -3]} intensity={mode === "light" ? 24 : 40} color={mode === "light" ? "#0369a1" : "#fb7185"} />
-          <ExperienceJourney selectedId={selectedId} onSelect={(node) => setSelectedId(node.id)} renderProfile={renderProfile} mode={mode} />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate={renderProfile === "standard"} autoRotateSpeed={0.7} />
+          <ExperienceJourney
+            isActive={isActive}
+            selectedId={selectedId}
+            onSelect={(node) => setSelectedId(node.id)}
+            renderProfile={renderProfile}
+            mode={mode}
+          />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate={renderProfile === "standard" && isActive} autoRotateSpeed={0.7} />
         </Canvas>
         <ProjectDetail node={selectedNode} />
       </div>
@@ -394,22 +298,5 @@ function ProjectDetail({ node }: { node: JourneyNode }) {
         ))}
       </div>
     </aside>
-  );
-}
-
-export function CodeSceneFallback() {
-  return (
-    <div className="relative h-full w-full overflow-hidden bg-[#07100d]">
-      <div className="absolute inset-0 opacity-70 scan-grid" />
-      <div className="code-orbit absolute left-1/2 top-1/2 h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#7ef7b9]/35" />
-      <div className="code-orbit code-orbit-slow absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#7dd3fc]/25" />
-      <div className="code-cube absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 border border-[#7ef7b9]/50 bg-[#7ef7b9]/10 shadow-[0_0_60px_rgba(126,247,185,0.25)]" />
-      <div className="absolute inset-x-6 top-8 grid gap-2 font-mono text-xs text-white/70 sm:grid-cols-2">
-        <span className="rounded-md border border-white/10 bg-black/25 px-3 py-2">const architecture = scalable;</span>
-        <span className="rounded-md border border-white/10 bg-black/25 px-3 py-2">stream.sync(SSE)</span>
-        <span className="rounded-md border border-white/10 bg-black/25 px-3 py-2">microfrontend.mount()</span>
-        <span className="rounded-md border border-white/10 bg-black/25 px-3 py-2">query.cache.persist()</span>
-      </div>
-    </div>
   );
 }
