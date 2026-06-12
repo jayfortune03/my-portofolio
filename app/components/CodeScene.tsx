@@ -162,7 +162,7 @@ function ExperienceJourney({
         >
           <group position={node.position}>
             <NodeMesh node={node} selected={selectedId === node.id} onSelect={onSelect} />
-            <Html center distanceFactor={5.7} position={[0, 0.58, 0]} zIndexRange={[20, 0]} style={{ pointerEvents: "auto" }}>
+            <Html center distanceFactor={5.7} position={[0, 0.58, 0]} zIndexRange={[8, 1]} style={{ pointerEvents: "auto" }}>
               <button
                 aria-label={`Show ${node.title} project details`}
                 className={`journey-label ${selectedId === node.id ? "journey-label-active" : ""}`}
@@ -355,7 +355,7 @@ export default function CodeScene({ mode }: { mode: SceneMode }) {
 
   return (
     <SceneBoundary>
-      <div className="relative h-full w-full bg-[var(--scene-surface)]">
+      <div className="code-scene-root relative h-full w-full bg-[var(--scene-surface)]">
         <Canvas
           camera={{ position: [0, 1.45, 6.35], fov: 48 }}
           dpr={[1, renderProfile === "lite" ? 1 : 1.5]}

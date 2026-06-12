@@ -682,9 +682,9 @@ export default function PortfolioPage() {
                 Let’s build something clean, fast, and useful.
               </h2>
               <p className="mt-4 max-w-2xl leading-7 text-white/68">
-                Available for full-stack engineering roles, frontend-heavy
-                enterprise products, mobile apps, and real-time operational
-                systems.
+                Available for full-stack, frontend, and backend engineering
+                roles across enterprise products, mobile apps, and real-time
+                operational systems.
               </p>
             </div>
             <div className="rounded-lg border border-white/10 bg-black/20 p-8 lg:p-10">
@@ -696,8 +696,8 @@ export default function PortfolioPage() {
               </div>
               <p className="mt-3 leading-7 text-white/64">
                 Download the latest CV as a searchable PDF, or reach out
-                directly for full-stack, frontend, mobile, and real-time product
-                work.
+                directly for full-stack, frontend, backend, mobile, and
+                real-time product work.
               </p>
               <div className="mt-5 space-y-3">
                 <Button

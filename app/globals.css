@@ -231,6 +231,15 @@ a {
   transform-style: preserve-3d;
 }
 
+.code-scene-root {
+  isolation: isolate;
+}
+
+.code-scene-root > div:first-child {
+  position: relative;
+  z-index: 0;
+}
+
 .journey-label {
   appearance: none;
   min-width: 132px;
@@ -305,6 +314,7 @@ a {
 
 .project-detail-panel {
   position: absolute;
+  z-index: 20;
   bottom: 16px;
   left: 16px;
   right: 16px;
