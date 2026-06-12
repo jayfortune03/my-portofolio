@@ -1,0 +1,26 @@
+node_modules/
+
+# Next.js
+.next/
+out/
+dist/
+build/
+next-env.d.ts
+
+# Production and dependency artifacts
+coverage/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Hosting and OS metadata
+.vercel/
+.DS_Store
