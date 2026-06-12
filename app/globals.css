@@ -289,6 +289,90 @@ a {
   color: var(--text-muted);
 }
 
+.scene-node-scroll {
+  scrollbar-width: none;
+}
+
+.scene-node-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scene-node-button {
+  appearance: none;
+  min-width: 132px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  color: var(--text-main);
+  cursor: pointer;
+  font-family: var(--font-mono), monospace;
+  padding: 9px 10px;
+  text-align: left;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.scene-node-button:hover,
+.scene-node-button:focus-visible,
+.scene-node-button-active {
+  border-color: color-mix(in srgb, var(--mint) 70%, transparent);
+  background: color-mix(in srgb, var(--mint) 12%, var(--panel-soft));
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.scene-node-button span,
+.scene-node-button strong,
+.scene-node-button small {
+  display: block;
+}
+
+.scene-node-button span {
+  color: var(--mint);
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.scene-node-button strong {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.scene-node-button small {
+  margin-top: 4px;
+  color: var(--text-subtle);
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.scene-fallback-detail {
+  border: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.scene-fallback-description {
+  display: -webkit-box;
+  max-height: 72px;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.scene-tech-chip {
+  border: 1px solid color-mix(in srgb, var(--mint) 18%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--mint) 8%, transparent);
+  color: var(--text-muted);
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  line-height: 1;
+  padding: 6px 7px;
+}
+
 .code-scene-root {
   isolation: isolate;
 }

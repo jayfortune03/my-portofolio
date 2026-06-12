@@ -250,7 +250,7 @@ export const journeyNodes: JourneyNode[] = [
   {
     id: "micro-fe",
     year: "2025",
-    title: "Micro-FE",
+    title: "AP2T / ACMT / RTR",
     stack: "Vue 3 / Vite",
     description: "Enterprise internal modules integrated into host applications through micro-frontend architecture.",
     details: [
