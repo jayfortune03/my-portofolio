@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
+
 import "./globals.css";
 
 const rawSiteUrl =
@@ -7,7 +9,9 @@ const rawSiteUrl =
   process.env.VERCEL_URL ??
   "http://localhost:3000";
 
-const siteUrl = rawSiteUrl.startsWith("http") ? rawSiteUrl : `https://${rawSiteUrl}`;
+const siteUrl = rawSiteUrl.startsWith("http")
+  ? rawSiteUrl
+  : `https://${rawSiteUrl}`;
 const siteTitle = "Nicholas Fortune | Full Stack, Frontend & Backend Engineer";
 const siteDescription =
   "Portfolio of Nicholas Fortune, a full stack, frontend, and backend engineer building scalable web, mobile, CRM, backend API, and real-time systems.";
@@ -74,6 +78,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning>{children}</body>
+      <Analytics />
     </html>
   );
 }

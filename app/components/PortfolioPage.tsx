@@ -2,7 +2,6 @@
 
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import CloseIcon from "@mui/icons-material/Close";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -33,6 +32,7 @@ import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { CodeSceneFallback } from "./CodeSceneFallback";
+import PortfolioAssistant from "./PortfolioAssistant";
 import {
   achievements,
   cvFiles,
@@ -123,6 +123,7 @@ export default function PortfolioPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [richSceneEnabled, setRichSceneEnabled] = useState(false);
   const [sceneInView, setSceneInView] = useState(true);
+  const [activeSection, setActiveSection] = useState("home");
   const heroVisualRef = useRef<HTMLDivElement>(null);
   const theme = useMemo(() => makeTheme(mode), [mode]);
 
@@ -150,7 +151,8 @@ export default function PortfolioPage() {
         const canvas = document.createElement("canvas");
         return Boolean(
           window.WebGLRenderingContext &&
-            (canvas.getContext("webgl") || canvas.getContext("experimental-webgl")),
+          (canvas.getContext("webgl") ||
+            canvas.getContext("experimental-webgl")),
         );
       } catch {
         return false;
@@ -158,14 +160,24 @@ export default function PortfolioPage() {
     };
 
     const updateRichScenePreference = () => {
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
       const narrowScreen = window.matchMedia("(max-width: 767px)").matches;
-      const lowCoreCount = navigator.hardwareConcurrency ? navigator.hardwareConcurrency <= 4 : false;
-      const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
-      const lowMemory = typeof deviceMemory === "number" ? deviceMemory <= 4 : false;
+      const lowCoreCount = navigator.hardwareConcurrency
+        ? navigator.hardwareConcurrency <= 4
+        : false;
+      const deviceMemory = (navigator as Navigator & { deviceMemory?: number })
+        .deviceMemory;
+      const lowMemory =
+        typeof deviceMemory === "number" ? deviceMemory <= 4 : false;
 
       setRichSceneEnabled(
-        hasWebGLSupport() && !reducedMotion && !narrowScreen && !lowCoreCount && !lowMemory,
+        hasWebGLSupport() &&
+          !reducedMotion &&
+          !narrowScreen &&
+          !lowCoreCount &&
+          !lowMemory,
       );
     };
 
@@ -220,6 +232,68 @@ export default function PortfolioPage() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [mobileMenuOpen]);
 
+  useEffect(() => {
+    const sectionIds = ["home", ...navLinks.map((link) => link.href.slice(1))];
+    let frameId = 0;
+
+    const updateActiveSection = () => {
+      const activationLine = window.innerHeight * 0.36;
+      let currentSection = sectionIds[0];
+
+      for (const sectionId of sectionIds) {
+        const element = document.getElementById(sectionId);
+
+        if (!element) {
+          continue;
+        }
+
+        if (element.getBoundingClientRect().top <= activationLine) {
+          currentSection = sectionId;
+        }
+      }
+
+      const isNearBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 8;
+
+      const nextSection = isNearBottom
+        ? sectionIds[sectionIds.length - 1]
+        : currentSection;
+
+      setActiveSection((currentActiveSection) =>
+        currentActiveSection === nextSection
+          ? currentActiveSection
+          : nextSection,
+      );
+    };
+
+    const scheduleUpdate = () => {
+      if (frameId) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(() => {
+        frameId = 0;
+        updateActiveSection();
+      });
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+
+    return () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+    };
+  }, []);
+
+  const isNavLinkActive = (href: string) => activeSection === href.slice(1);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -228,17 +302,23 @@ export default function PortfolioPage() {
         data-theme={mode}
       >
         <nav className="site-nav fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-xl">
-          <div className="mx-auto flex max-w-[1500px] items-center justify-between px-5 py-4">
+          <div className="mx-auto flex max-w-[1680px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <a
               href="#home"
-              className="font-mono text-sm font-bold tracking-normal text-[#7ef7b9]"
+              className={`site-brand font-mono text-sm font-bold tracking-normal text-[#7ef7b9] ${activeSection === "home" ? "site-brand-active" : ""}`}
               onClick={() => setMobileMenuOpen(false)}
+              aria-current={activeSection === "home" ? "page" : undefined}
             >
               NF.dev
             </a>
             <div className="hidden items-center gap-6 text-sm text-white/72 md:flex">
               {navLinks.map((link) => (
-                <a key={link.href} href={link.href}>
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`site-nav-link ${isNavLinkActive(link.href) ? "site-nav-link-active" : ""}`}
+                  aria-current={isNavLinkActive(link.href) ? "page" : undefined}
+                >
                   {link.label}
                 </a>
               ))}
@@ -272,26 +352,24 @@ export default function PortfolioPage() {
                   )}
                 </IconButton>
               </Tooltip>
-              <Button
-                href={profileLinks.whatsapp}
-                target="_blank"
-                rel="noreferrer"
-                size="small"
-                variant="outlined"
-                startIcon={<WhatsAppIcon />}
-              >
-                WhatsApp
-              </Button>
               <IconButton
                 aria-controls="mobile-navigation"
                 aria-expanded={mobileMenuOpen}
-                aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-label={
+                  mobileMenuOpen
+                    ? "Close navigation menu"
+                    : "Open navigation menu"
+                }
                 className="md:!hidden"
                 color="primary"
                 onClick={() => setMobileMenuOpen((current) => !current)}
                 size="small"
               >
-                {mobileMenuOpen ? <CloseIcon fontSize="small" /> : <MenuIcon fontSize="small" />}
+                {mobileMenuOpen ? (
+                  <CloseIcon fontSize="small" />
+                ) : (
+                  <MenuIcon fontSize="small" />
+                )}
               </IconButton>
             </div>
           </div>
@@ -299,13 +377,14 @@ export default function PortfolioPage() {
             id="mobile-navigation"
             className={`mobile-nav-panel md:hidden ${mobileMenuOpen ? "mobile-nav-panel-open" : ""}`}
           >
-            <div className="mx-auto grid max-w-[1500px] gap-2 px-5 pb-4">
+            <div className="mx-auto grid max-w-[1680px] gap-2 px-4 pb-4 sm:px-6">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
-                  className="rounded-md px-3 py-3 text-sm font-bold text-white/78"
+                  className={`site-nav-link mobile-nav-link rounded-md px-3 py-3 text-sm font-bold text-white/78 ${isNavLinkActive(link.href) ? "site-nav-link-active" : ""}`}
                   onClick={() => setMobileMenuOpen(false)}
+                  aria-current={isNavLinkActive(link.href) ? "page" : undefined}
                 >
                   {link.label}
                 </a>
@@ -316,7 +395,7 @@ export default function PortfolioPage() {
 
         <section
           id="home"
-          className="relative mx-auto grid min-h-screen max-w-[1500px] scroll-mt-24 items-center gap-12 px-5 pb-16 pt-28 lg:grid-cols-[0.98fr_1.02fr]"
+          className="relative mx-auto grid min-h-screen max-w-[1680px] scroll-mt-24 items-center gap-10 px-4 pb-16 pt-24 sm:px-6 sm:pt-28 lg:grid-cols-[0.98fr_1.02fr] lg:items-start lg:px-8 lg:pt-36 xl:gap-14 xl:pt-40"
         >
           <motion.div
             initial="hidden"
@@ -324,9 +403,8 @@ export default function PortfolioPage() {
             variants={fadeUp}
             transition={{ duration: 0.7 }}
           >
-            <div className="hero-badge mb-6 inline-flex items-center gap-2 rounded-md px-3 py-2 font-mono text-xs">
-              <AutoAwesomeIcon fontSize="small" />
-              Full stack engineer from Tangerang, Indonesia
+            <div className="hero-badge mb-6 inline-flex items-center rounded-md px-4 py-2.5 font-mono text-sm font-bold">
+              Full Stack Engineer | Tangerang, Indonesia
             </div>
             <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-normal text-white sm:text-6xl lg:text-7xl">
               Nicholas Fortune, Full Stack Engineer.
@@ -370,7 +448,7 @@ export default function PortfolioPage() {
           <motion.div
             ref={heroVisualRef}
             data-testid="hero-visual"
-            className="glass relative h-[410px] overflow-hidden rounded-lg lg:h-[560px]"
+            className="glass relative h-[500px] overflow-hidden rounded-lg sm:h-[430px] lg:h-[560px]"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, delay: 0.12 }}
@@ -385,7 +463,7 @@ export default function PortfolioPage() {
 
         <section
           id="journey"
-          className="mx-auto max-w-[1500px] scroll-mt-24 px-5 py-20"
+          className="mx-auto max-w-[1680px] scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8"
         >
           <SectionHeading
             eyebrow="Experience line"
@@ -426,7 +504,7 @@ export default function PortfolioPage() {
 
         <section
           id="projects"
-          className="mx-auto max-w-[1500px] scroll-mt-24 px-5 py-20"
+          className="mx-auto max-w-[1680px] scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8"
         >
           <SectionHeading
             eyebrow="Selected builds"
@@ -464,7 +542,7 @@ export default function PortfolioPage() {
 
         <section
           id="stack"
-          className="mx-auto max-w-[1500px] scroll-mt-24 px-5 py-20"
+          className="mx-auto max-w-[1680px] scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8"
         >
           <SectionHeading
             eyebrow="Tech stack"
@@ -494,7 +572,7 @@ export default function PortfolioPage() {
 
         <section
           id="certification"
-          className="mx-auto max-w-[1500px] scroll-mt-24 px-5 py-20"
+          className="mx-auto max-w-[1680px] scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8"
         >
           <SectionHeading
             eyebrow="Certification"
@@ -591,7 +669,7 @@ export default function PortfolioPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1500px] px-5 py-20">
+        <section className="mx-auto max-w-[1680px] px-4 py-20 sm:px-6 lg:px-8">
           <SectionHeading
             eyebrow="Impact"
             title="A few outcomes that matter."
@@ -618,7 +696,7 @@ export default function PortfolioPage() {
 
         <section
           id="contact"
-          className="mx-auto max-w-[1500px] scroll-mt-24 px-5 py-24"
+          className="mx-auto max-w-[1680px] scroll-mt-24 px-4 py-24 sm:px-6 lg:px-8"
         >
           <div className="glass grid gap-8 rounded-lg p-8 lg:grid-cols-[0.98fr_1.02fr] lg:p-10">
             <div>
@@ -700,6 +778,7 @@ export default function PortfolioPage() {
             </div>
           </div>
         </section>
+        <PortfolioAssistant />
       </main>
     </ThemeProvider>
   );
