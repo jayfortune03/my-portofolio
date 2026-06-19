@@ -644,7 +644,14 @@ function getLocalIntents(): FaqIntent[] {
       ],
       answer: () => ({
         answer:
-          `Nicholas has worked as Lead Fullstack Engineer at Amani Group Indonesia and HappyHomes. His leadership scope includes frontend/backend architecture, operational platform delivery, mentoring junior developers, and maintaining clean code practices.\n\nRelevant impact:\n${formatList(achievements.slice(0, 3))}`,
+          `Nicholas has worked as Lead Fullstack Engineer at Amani Group Indonesia and HappyHomes. His leadership scope includes frontend/backend architecture, operational platform delivery, mentoring junior developers, and maintaining clean code practices.\n\nRelevant impact:\n${formatList(
+            achievements
+              .slice(0, 3)
+              .map(
+                (achievement) =>
+                  `${achievement.year} - ${achievement.title}: ${achievement.contribution}`,
+              ),
+          )}`,
       }),
     },
     {
