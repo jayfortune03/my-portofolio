@@ -1,53 +1,30 @@
 "use client";
 
-import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
-import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import CloseIcon from "@mui/icons-material/Close";
-import DataObjectIcon from "@mui/icons-material/DataObject";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import DescriptionIcon from "@mui/icons-material/Description";
-import DownloadIcon from "@mui/icons-material/Download";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstructions";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import MenuIcon from "@mui/icons-material/Menu";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
-import SchoolIcon from "@mui/icons-material/School";
-import StorageIcon from "@mui/icons-material/Storage";
-import TimelineIcon from "@mui/icons-material/Timeline";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import {
-  Button,
-  Chip,
   CssBaseline,
-  IconButton,
   ThemeProvider,
-  Tooltip,
   createTheme,
 } from "@mui/material";
-import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { CodeSceneFallback } from "./CodeSceneFallback";
-import PortfolioAssistant from "./PortfolioAssistant";
 import {
-  achievements,
-  cvFiles,
-  experiences,
-  heroStats,
-  navLinks,
-  profileLinks,
-  projects,
-  stackGroups,
-  type StackGroup,
-} from "../data/portfolio";
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { navLinks } from "../data/portfolio";
+import { CertificationSection } from "./certification/CertificationSection";
+import { ContactSection } from "./contact/ContactSection";
+import { HeroSection } from "./hero/HeroSection";
+import { ImpactSection } from "./impact/ImpactSection";
+import { JourneySection } from "./journey/JourneySection";
+import { Navigation } from "./navigation/Navigation";
+import { ProjectsSection } from "./projects/ProjectsSection";
+import { StackSection } from "./stack/StackSection";
 
-const CodeScene = dynamic(() => import("./CodeScene"), {
+const PortfolioAssistant = dynamic(() => import("./PortfolioAssistant"), {
   ssr: false,
-  loading: () => <CodeSceneFallback />,
 });
 
 type ThemeMode = "dark" | "light";
@@ -106,18 +83,6 @@ function makeTheme(mode: ThemeMode) {
   });
 }
 
-const stackIcons: Record<StackGroup["icon"], ReactNode> = {
-  frontend: <DataObjectIcon />,
-  backend: <StorageIcon />,
-  mobile: <PhoneIphoneIcon />,
-  cloud: <IntegrationInstructionsIcon />,
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export default function PortfolioPage() {
   const [mode, setMode] = useState<ThemeMode>("dark");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -151,8 +116,8 @@ export default function PortfolioPage() {
         const canvas = document.createElement("canvas");
         return Boolean(
           window.WebGLRenderingContext &&
-          (canvas.getContext("webgl") ||
-            canvas.getContext("experimental-webgl")),
+            (canvas.getContext("webgl") ||
+              canvas.getContext("experimental-webgl")),
         );
       } catch {
         return false;
@@ -171,13 +136,15 @@ export default function PortfolioPage() {
         .deviceMemory;
       const lowMemory =
         typeof deviceMemory === "number" ? deviceMemory <= 4 : false;
-
-      setRichSceneEnabled(
+      const nextRichSceneEnabled =
         hasWebGLSupport() &&
-          !reducedMotion &&
-          !narrowScreen &&
-          !lowCoreCount &&
-          !lowMemory,
+        !reducedMotion &&
+        !narrowScreen &&
+        !lowCoreCount &&
+        !lowMemory;
+
+      setRichSceneEnabled((current) =>
+        current === nextRichSceneEnabled ? current : nextRichSceneEnabled,
       );
     };
 
@@ -203,7 +170,9 @@ export default function PortfolioPage() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setSceneInView(entry.isIntersecting);
+        setSceneInView((current) =>
+          current === entry.isIntersecting ? current : entry.isIntersecting,
+        );
       },
       {
         rootMargin: "180px",
@@ -255,7 +224,6 @@ export default function PortfolioPage() {
       const isNearBottom =
         window.innerHeight + window.scrollY >=
         document.documentElement.scrollHeight - 8;
-
       const nextSection = isNearBottom
         ? sectionIds[sectionIds.length - 1]
         : currentSection;
@@ -292,7 +260,17 @@ export default function PortfolioPage() {
     };
   }, []);
 
-  const isNavLinkActive = (href: string) => activeSection === href.slice(1);
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
+
+  const toggleMobileMenu = useCallback(() => {
+    setMobileMenuOpen((current) => !current);
+  }, []);
+
+  const toggleMode = useCallback(() => {
+    setMode((current) => (current === "dark" ? "light" : "dark"));
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -301,526 +279,28 @@ export default function PortfolioPage() {
         className="portfolio-shell scan-grid min-h-screen overflow-hidden"
         data-theme={mode}
       >
-        <nav className="site-nav fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-xl">
-          <div className="mx-auto flex max-w-[1680px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-            <a
-              href="#home"
-              className={`site-brand font-mono text-sm font-bold tracking-normal text-[#7ef7b9] ${activeSection === "home" ? "site-brand-active" : ""}`}
-              onClick={() => setMobileMenuOpen(false)}
-              aria-current={activeSection === "home" ? "page" : undefined}
-            >
-              NF.dev
-            </a>
-            <div className="hidden items-center gap-6 text-sm text-white/72 md:flex">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className={`site-nav-link ${isNavLinkActive(link.href) ? "site-nav-link-active" : ""}`}
-                  aria-current={isNavLinkActive(link.href) ? "page" : undefined}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-            <div className="flex items-center gap-2">
-              <Tooltip
-                title={
-                  mode === "dark"
-                    ? "Switch to light mode"
-                    : "Switch to dark mode"
-                }
-              >
-                <IconButton
-                  aria-label={
-                    mode === "dark"
-                      ? "Switch to light mode"
-                      : "Switch to dark mode"
-                  }
-                  color="primary"
-                  onClick={() =>
-                    setMode((current) =>
-                      current === "dark" ? "light" : "dark",
-                    )
-                  }
-                  size="small"
-                >
-                  {mode === "dark" ? (
-                    <LightModeIcon fontSize="small" />
-                  ) : (
-                    <DarkModeIcon fontSize="small" />
-                  )}
-                </IconButton>
-              </Tooltip>
-              <IconButton
-                aria-controls="mobile-navigation"
-                aria-expanded={mobileMenuOpen}
-                aria-label={
-                  mobileMenuOpen
-                    ? "Close navigation menu"
-                    : "Open navigation menu"
-                }
-                className="md:!hidden"
-                color="primary"
-                onClick={() => setMobileMenuOpen((current) => !current)}
-                size="small"
-              >
-                {mobileMenuOpen ? (
-                  <CloseIcon fontSize="small" />
-                ) : (
-                  <MenuIcon fontSize="small" />
-                )}
-              </IconButton>
-            </div>
-          </div>
-          <div
-            id="mobile-navigation"
-            className={`mobile-nav-panel md:hidden ${mobileMenuOpen ? "mobile-nav-panel-open" : ""}`}
-          >
-            <div className="mx-auto grid max-w-[1680px] gap-2 px-4 pb-4 sm:px-6">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className={`site-nav-link mobile-nav-link rounded-md px-3 py-3 text-sm font-bold text-white/78 ${isNavLinkActive(link.href) ? "site-nav-link-active" : ""}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  aria-current={isNavLinkActive(link.href) ? "page" : undefined}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          </div>
-        </nav>
-
-        <section
-          id="home"
-          className="relative mx-auto grid min-h-screen max-w-[1680px] scroll-mt-24 items-center gap-10 px-4 pb-16 pt-24 sm:px-6 sm:pt-28 lg:grid-cols-[0.98fr_1.02fr] lg:items-start lg:px-8 lg:pt-36 xl:gap-14 xl:pt-40"
-        >
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            transition={{ duration: 0.7 }}
-          >
-            <div className="hero-badge mb-6 inline-flex items-center rounded-md px-4 py-2.5 font-mono text-sm font-bold">
-              Full Stack Engineer | Tangerang, Indonesia
-            </div>
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-normal text-white sm:text-6xl lg:text-7xl">
-              Nicholas Fortune, Full Stack Engineer.
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/72">
-              I build scalable CRM, real-time, mobile, and enterprise platforms
-              across frontend, backend, cloud, and team leadership. The work is
-              practical: clean architecture, fast interfaces, reliable data
-              flows, and systems that operators can use every day.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button
-                href="#projects"
-                variant="contained"
-                endIcon={<ArrowOutwardIcon />}
-                size="large"
-              >
-                View projects
-              </Button>
-              <Button
-                href="#journey"
-                variant="outlined"
-                startIcon={<TimelineIcon />}
-                size="large"
-              >
-                Work journey
-              </Button>
-            </div>
-            <div className="mt-10 grid max-w-2xl grid-cols-3 gap-3">
-              {heroStats.map(([value, label]) => (
-                <div key={label} className="glass rounded-lg px-4 py-5">
-                  <div className="font-mono text-2xl font-black text-[#7ef7b9]">
-                    {value}
-                  </div>
-                  <div className="mt-1 text-sm text-white/58">{label}</div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            ref={heroVisualRef}
-            data-testid="hero-visual"
-            className="glass relative h-[500px] overflow-hidden rounded-lg sm:h-[430px] lg:h-[560px]"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.12 }}
-          >
-            {richSceneEnabled ? (
-              <CodeScene isActive={sceneInView} mode={mode} />
-            ) : (
-              <CodeSceneFallback />
-            )}
-          </motion.div>
-        </section>
-
-        <section
-          id="journey"
-          className="mx-auto max-w-[1680px] scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8"
-        >
-          <SectionHeading
-            eyebrow="Experience line"
-            title="A connected journey through production systems."
-          />
-          <div className="relative mt-12">
-            <div className="timeline-rail absolute left-4 top-0 h-full w-px md:left-1/2" />
-            <div className="space-y-7">
-              {experiences.map((item, index) => (
-                <motion.article
-                  key={`${item.company}-${item.period}`}
-                  className={`relative grid gap-5 md:grid-cols-2 ${index % 2 ? "md:[&>div]:col-start-2" : ""}`}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-80px" }}
-                  variants={fadeUp}
-                  transition={{ duration: 0.55 }}
-                >
-                  <div className="absolute left-2.5 top-7 h-3.5 w-3.5 rounded-full border-2 border-[#07100d] bg-[#7ef7b9] shadow-[0_0_28px_rgba(126,247,185,0.9)] md:left-[calc(50%-7px)]" />
-                  <div className="glass ml-10 rounded-lg p-6 md:ml-0">
-                    <div className="font-mono text-xs text-[#7dd3fc]">
-                      {item.period}
-                    </div>
-                    <h3 className="mt-3 text-2xl font-black text-white">
-                      {item.role}
-                    </h3>
-                    <p className="mt-1 text-[#7ef7b9]">{item.company}</p>
-                    <p className="mt-4 font-mono text-sm text-[#f8d66d]">
-                      {item.signal}
-                    </p>
-                    <p className="mt-3 leading-7 text-white/68">{item.body}</p>
-                  </div>
-                </motion.article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="projects"
-          className="mx-auto max-w-[1680px] scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8"
-        >
-          <SectionHeading
-            eyebrow="Selected builds"
-            title="Projects shaped around operations, data, and speed."
-          />
-          <div className="mt-10 grid auto-rows-fr gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {projects.map((project, index) => (
-              <motion.article
-                key={project.name}
-                className="glass flex min-h-[300px] flex-col rounded-lg p-6"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-80px" }}
-                variants={fadeUp}
-                transition={{ duration: 0.45, delay: index * 0.03 }}
-              >
-                <div className="font-mono text-xs text-[#7dd3fc]">
-                  {project.type}
-                </div>
-                <h3 className="mt-3 text-2xl font-black text-white">
-                  {project.name}
-                </h3>
-                <p className="mt-4 flex-1 leading-7 text-white/66">
-                  {project.description}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {project.stack.map((item) => (
-                    <Chip key={item} label={item} size="small" />
-                  ))}
-                </div>
-              </motion.article>
-            ))}
-          </div>
-        </section>
-
-        <section
-          id="stack"
-          className="mx-auto max-w-[1680px] scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8"
-        >
-          <SectionHeading
-            eyebrow="Tech stack"
-            title="Typed apps, resilient APIs, and practical architecture."
-          />
-          <div className="mt-10 grid auto-rows-fr gap-5 md:grid-cols-2">
-            {stackGroups.map((group) => (
-              <div
-                key={group.label}
-                className="glass flex h-full flex-col rounded-lg p-6"
-              >
-                <div className="flex items-center gap-3 text-[#7ef7b9]">
-                  {stackIcons[group.icon]}
-                  <h3 className="text-xl font-black text-white">
-                    {group.label}
-                  </h3>
-                </div>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {group.items.map((item) => (
-                    <Chip key={item} label={item} />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section
-          id="certification"
-          className="mx-auto max-w-[1680px] scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8"
-        >
-          <SectionHeading
-            eyebrow="Certification"
-            title="Bootcamp foundation behind the production experience."
-          />
-          <div className="mt-10 grid auto-rows-fr items-stretch gap-5 lg:grid-cols-2">
-            <motion.article
-              className="glass flex h-full flex-col rounded-lg p-6"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              variants={fadeUp}
-              transition={{ duration: 0.45 }}
-            >
-              <div className="flex items-center gap-3 text-[#7ef7b9]">
-                <WorkspacePremiumIcon />
-                <h3 className="text-2xl font-black text-white">
-                  Hacktiv8 Certification
-                </h3>
-              </div>
-              <div className="mt-5 rounded-lg border border-white/10 bg-black/24 p-5">
-                <div className="flex items-start gap-3">
-                  <SchoolIcon className="mt-1 text-[#7dd3fc]" />
-                  <div>
-                    <div className="font-mono text-xs text-[#7dd3fc]">
-                      June 2021 - September 2021
-                    </div>
-                    <p className="mt-2 text-lg font-bold text-white">
-                      Full Stack JavaScript Immersive
-                    </p>
-                    <p className="mt-2 leading-7 text-white/64">
-                      Coding bootcamp certification covering JavaScript,
-                      full-stack web development, application architecture, and
-                      production-oriented delivery.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-auto flex flex-wrap gap-3 pt-7">
-                <Button
-                  href={cvFiles.certificate}
-                  target="_blank"
-                  rel="noreferrer"
-                  variant="contained"
-                  startIcon={<WorkspacePremiumIcon />}
-                >
-                  View certificate
-                </Button>
-                <Button
-                  href={cvFiles.certificate}
-                  download
-                  variant="outlined"
-                  startIcon={<DownloadIcon />}
-                >
-                  Download
-                </Button>
-              </div>
-            </motion.article>
-
-            <motion.article
-              className="glass flex h-full flex-col rounded-lg p-6"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              variants={fadeUp}
-              transition={{ duration: 0.45, delay: 0.06 }}
-            >
-              <div className="font-mono text-sm text-[#7dd3fc]">
-                career.foundation
-              </div>
-              <h3 className="mt-3 text-2xl font-black text-white">
-                From JavaScript fundamentals to enterprise platforms.
-              </h3>
-              <p className="mt-4 leading-7 text-white/68">
-                Hacktiv8 was the launch point for the full-stack path: frontend
-                delivery, backend APIs, database workflows, and product-minded
-                engineering. The later work experience expands that foundation
-                into CRM systems, mobile apps, real-time operations, and
-                micro-frontend architecture.
-              </p>
-              <div className="mt-auto flex flex-wrap gap-2 pt-6">
-                {[
-                  "JavaScript",
-                  "Full Stack",
-                  "REST APIs",
-                  "Frontend",
-                  "Backend",
-                  "Deployment",
-                ].map((item) => (
-                  <Chip key={item} label={item} />
-                ))}
-              </div>
-            </motion.article>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-[1680px] px-4 py-20 sm:px-6 lg:px-8">
-          <SectionHeading
-            eyebrow="Impact"
-            title="A few outcomes that matter."
-          />
-          <div className="mt-10 grid auto-rows-fr gap-4 md:grid-cols-2">
-            {achievements.map((achievement, index) => (
-              <motion.div
-                key={achievement.title}
-                className="glass h-full rounded-lg p-5"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                transition={{ duration: 0.45, delay: index * 0.05 }}
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <div className="font-mono text-sm text-[#7ef7b9]">
-                    0{index + 1}
-                  </div>
-                  <div className="rounded-full border border-[#7dd3fc]/25 bg-[#7dd3fc]/8 px-3 py-1 font-mono text-xs text-[#7dd3fc]">
-                    {achievement.year}
-                  </div>
-                </div>
-                <h3 className="mt-4 text-xl font-black text-white">
-                  {achievement.title}
-                </h3>
-                <p className="mt-3 leading-7 text-white/68">
-                  {achievement.description}
-                </p>
-                <div className="mt-5 border-t border-white/10 pt-4">
-                  <div className="font-mono text-xs uppercase tracking-[0.16em] text-[#7ef7b9]">
-                    My contribution
-                  </div>
-                  <p className="mt-2 leading-7 text-white/78">
-                    {achievement.contribution}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        <section
-          id="contact"
-          className="mx-auto max-w-[1680px] scroll-mt-24 px-4 py-24 sm:px-6 lg:px-8"
-        >
-          <div className="glass grid gap-8 rounded-lg p-8 lg:grid-cols-[0.98fr_1.02fr] lg:p-10">
-            <div>
-              <div className="font-mono text-sm text-[#7ef7b9]">
-                contact.init()
-              </div>
-              <h2 className="mt-3 text-4xl font-black text-white">
-                Let’s build something clean, fast, and useful.
-              </h2>
-              <p className="mt-4 max-w-2xl leading-7 text-white/68">
-                Available for full-stack, frontend, and backend engineering
-                roles across enterprise products, mobile apps, and real-time
-                operational systems.
-              </p>
-            </div>
-            <div className="rounded-lg border border-white/10 bg-black/20 p-8 lg:p-10">
-              <div className="flex items-center gap-3 text-[#7ef7b9]">
-                <DescriptionIcon />
-                <h3 className="text-xl font-black text-white">
-                  Resume and contact
-                </h3>
-              </div>
-              <p className="mt-3 leading-7 text-white/64">
-                Download the latest CV as a searchable PDF, or reach out
-                directly for full-stack, frontend, backend, mobile, and
-                real-time product work.
-              </p>
-              <div className="mt-5 space-y-3">
-                <Button
-                  className="contact-action w-full"
-                  href={cvFiles.pdf}
-                  download
-                  variant="contained"
-                  startIcon={<PictureAsPdfIcon />}
-                >
-                  Download CV
-                </Button>
-                <div className="contact-actions grid mt-4 gap-3 sm:grid-cols-2">
-                  <Button
-                    className="contact-action"
-                    href={profileLinks.email}
-                    variant="outlined"
-                    startIcon={<AlternateEmailIcon />}
-                  >
-                    Email
-                  </Button>
-                  <Button
-                    className="contact-action"
-                    href={profileLinks.whatsapp}
-                    target="_blank"
-                    rel="noreferrer"
-                    variant="outlined"
-                    startIcon={<WhatsAppIcon />}
-                  >
-                    WhatsApp
-                  </Button>
-                  <Button
-                    className="contact-action"
-                    href={profileLinks.github}
-                    target="_blank"
-                    rel="noreferrer"
-                    variant="outlined"
-                    startIcon={<GitHubIcon />}
-                  >
-                    GitHub
-                  </Button>
-                  <Button
-                    className="contact-action"
-                    href={profileLinks.linkedin}
-                    target="_blank"
-                    rel="noreferrer"
-                    variant="outlined"
-                    startIcon={<LinkedInIcon />}
-                  >
-                    LinkedIn
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <Navigation
+          activeSection={activeSection}
+          mode={mode}
+          mobileMenuOpen={mobileMenuOpen}
+          onCloseMobileMenu={closeMobileMenu}
+          onToggleMobileMenu={toggleMobileMenu}
+          onToggleMode={toggleMode}
+        />
+        <HeroSection
+          ref={heroVisualRef}
+          mode={mode}
+          richSceneEnabled={richSceneEnabled}
+          sceneInView={sceneInView}
+        />
+        <JourneySection />
+        <ProjectsSection />
+        <StackSection />
+        <CertificationSection />
+        <ImpactSection />
+        <ContactSection />
         <PortfolioAssistant />
       </main>
     </ThemeProvider>
-  );
-}
-
-function SectionHeading({
-  eyebrow,
-  title,
-}: {
-  eyebrow: string;
-  title: string;
-}) {
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-90px" }}
-      variants={fadeUp}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="font-mono text-sm text-[#7ef7b9]">{eyebrow}</div>
-      <h2 className="mt-3 max-w-3xl text-4xl font-black leading-tight text-white md:text-5xl">
-        {title}
-      </h2>
-    </motion.div>
   );
 }

@@ -11,6 +11,19 @@ export type Project = {
   type: string;
   description: string;
   stack: string[];
+  visual: {
+    variant:
+      | "operations"
+      | "supplier"
+      | "commerce"
+      | "crm"
+      | "mobile"
+      | "chat"
+      | "modules"
+      | "website";
+    label: string;
+    accent: "mint" | "aqua" | "coral" | "amber" | "violet";
+  };
 };
 
 export type StackGroup = {
@@ -49,15 +62,22 @@ export const navLinks = [
 
 export const heroStats = [
   ["4+", "years"],
-  ["12+", "major builds"],
+  ["13+", "major builds"],
   ["Full", "stack scope"],
 ] as const;
 
 export const experiences: Experience[] = [
   {
+    role: "Frontend Engineer",
+    company: "Lion Parcel",
+    period: "Jun 2026 - Present",
+    signal: "Public website SSR migration",
+    body: "Developing the Nuxt 3 SSR version of lionparcel.com, covering SEO-focused public pages, news/media coverage sections, Malaysia content, corporate contact flows, i18n, performance, and production QA fixes.",
+  },
+  {
     role: "Frontend Developer",
     company: "PLN Icon Plus",
-    period: "Oct 2025 - Present",
+    period: "Oct 2025 - Jun 2026",
     signal: "Enterprise micro-frontends",
     body: "Modernizing internal CRM, metering, route management, and financial reporting systems with Vue 3, Vite, TypeScript, Tailwind, Ant Design Vue, REST APIs, JWT auth, and Module Federation.",
   },
@@ -93,11 +113,28 @@ export const experiences: Experience[] = [
 
 export const projects: Project[] = [
   {
+    name: "Lion Parcel Public Website SSR",
+    type: "Public logistics website | Jun 2026 - Present",
+    description:
+      "Nuxt 3 SSR migration for lionparcel.com with SEO-ready public pages, news and media coverage modules, Malaysia content updates, corporate contact flows, i18n, performance tooling, and production QA fixes.",
+    stack: ["Nuxt 3", "Vue 3", "SSR", "TypeScript", "Pinia", "SEO"],
+    visual: {
+      variant: "website",
+      label: "lionparcel.com.ssr",
+      accent: "coral",
+    },
+  },
+  {
     name: "Real Estate Management",
     type: "Developer operations system",
     description:
       "Land acquisition, permit tracking, construction progress, procurement, dashboards, and SSE status monitoring for property developers.",
     stack: ["Next.js", "Express.ts", "TypeScript", "PostgreSQL", "SSE", "GCP"],
+    visual: {
+      variant: "operations",
+      label: "ops.system_preview",
+      accent: "mint",
+    },
   },
   {
     name: "Amani Supplier",
@@ -112,6 +149,11 @@ export const projects: Project[] = [
       "Material UI",
       "SSE",
     ],
+    visual: {
+      variant: "supplier",
+      label: "inventory.preview",
+      accent: "aqua",
+    },
   },
   {
     name: "Amani Contractor",
@@ -119,6 +161,11 @@ export const projects: Project[] = [
     description:
       "Contractor-facing purchasing flow connected to supplier inventory, real-time material tracking, clean backend architecture, and Xendit payment integration.",
     stack: ["Next.js", "Golang", "Gin", "PostgreSQL", "Material UI", "Xendit"],
+    visual: {
+      variant: "commerce",
+      label: "contractor.checkout",
+      accent: "amber",
+    },
   },
   {
     name: "HappyHomes CRM",
@@ -126,6 +173,11 @@ export const projects: Project[] = [
     description:
       "Order management, customer tracking, transaction dashboards, and real-time payment tracking designed to avoid conflicting sales operations.",
     stack: ["React", "Express", "TanStack Query", "SSE", "PocketBase", "GCP"],
+    visual: {
+      variant: "crm",
+      label: "crm.pipeline",
+      accent: "mint",
+    },
   },
   {
     name: "QC Mobile",
@@ -133,6 +185,11 @@ export const projects: Project[] = [
     description:
       "React Native app for construction quality checks, photo verification, mobile camera workflows, and backend inspection data processing.",
     stack: ["React Native", "TypeScript", "Express", "PostgreSQL", "GCP"],
+    visual: {
+      variant: "mobile",
+      label: "mobile.qc_flow",
+      accent: "coral",
+    },
   },
   {
     name: "Marketa Chat",
@@ -147,6 +204,11 @@ export const projects: Project[] = [
       "CapacitorJS",
       "PostgreSQL",
     ],
+    visual: {
+      variant: "chat",
+      label: "chat.crm_view",
+      accent: "aqua",
+    },
   },
   {
     name: "AP2T / ACMT / RTR",
@@ -161,6 +223,11 @@ export const projects: Project[] = [
       "REST API",
       "JWT",
     ],
+    visual: {
+      variant: "modules",
+      label: "module.federation",
+      accent: "violet",
+    },
   },
 ];
 
@@ -171,9 +238,11 @@ export const stackGroups: StackGroup[] = [
     items: [
       "React",
       "Next.js",
+      "Nuxt 3",
       "Vue.js",
       "TypeScript",
       "Tailwind",
+      "Pinia",
       "Material UI",
       "Ant Design Vue",
       "Vite",
@@ -220,6 +289,14 @@ export const stackGroups: StackGroup[] = [
 
 export const achievements: Achievement[] = [
   {
+    year: "2026 - Present",
+    title: "Public Website SSR Migration",
+    description:
+      "Contributing to Lion Parcel's public website migration to Nuxt 3 SSR for faster rendering, stronger SEO coverage, and maintainable public content delivery.",
+    contribution:
+      "Built and refined SSR-ready public website sections including news media coverage, reusable brand marquee components, navigation updates, Malaysia content/contact flows, and production QA fixes.",
+  },
+  {
     year: "2025",
     title: "Reliable Data Migration",
     description:
@@ -228,7 +305,7 @@ export const achievements: Achievement[] = [
       "Designed the data mapping and transformation flow, validated migrated records, and reconciled relationships between the source and destination databases.",
   },
   {
-    year: "2025 - Present",
+    year: "2025 - 2026",
     title: "Scalable Micro-Frontend Architecture",
     description:
       "Introduced a modular frontend architecture for enterprise CRM, metering, route management, and reporting platforms at PLN Icon Plus.",
@@ -376,6 +453,23 @@ export const journeyNodes: JourneyNode[] = [
     color: "#a78bfa",
     position: [3.25, 0.2, -0.22],
     shape: "modules",
+  },
+  {
+    id: "lion-parcel-ssr",
+    year: "2026",
+    title: "Lion Parcel SSR",
+    stack: "Nuxt 3 / SSR",
+    description:
+      "Public logistics website migration for lionparcel.com with SSR, SEO, i18n, and content-heavy customer pages.",
+    details: [
+      "Developed Nuxt 3 SSR public website sections for news, media coverage, and brand content.",
+      "Maintained Malaysia and corporate contact flows with localized copy and QA-driven fixes.",
+      "Worked across SEO metadata, sitemap/robots setup, performance tooling, analytics, and server API integration.",
+    ],
+    tech: ["Nuxt 3", "Vue 3", "TypeScript", "Pinia", "i18n", "SEO"],
+    color: "#fb7185",
+    position: [4.45, -0.05, 0.34],
+    shape: "sphere",
   },
 ];
 

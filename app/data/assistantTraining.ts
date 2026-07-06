@@ -57,7 +57,7 @@ export const websiteStructure: WebsiteStructure = {
     {
       name: "Projects",
       purpose:
-        "Highlights selected builds across CRM, real estate operations, mobile QC, chat, and enterprise modules.",
+        "Highlights selected builds across public SSR websites, CRM, real estate operations, mobile QC, chat, and enterprise modules.",
     },
     {
       name: "Stack",
@@ -128,17 +128,47 @@ export const stackKnowledge: StackKnowledge[] = [
     usedInProjects: ["Real Estate Management", "Amani Supplier", "Amani Contractor"],
   },
   {
+    name: "Nuxt 3 / SSR",
+    category: "Frontend",
+    aliases: [
+      "nuxt",
+      "nuxt.js",
+      "nuxt 3",
+      "ssr",
+      "server side rendering",
+      "server-side rendering",
+      "seo",
+      "public website",
+      "lion parcel",
+      "lionparcel",
+    ],
+    explanation:
+      "Nuxt 3 SSR is used by Nicholas for Lion Parcel's public website migration, where faster initial rendering, SEO, i18n, and content-heavy public pages matter.",
+    usedFor: [
+      "Public website SSR migration",
+      "SEO-ready content and news pages",
+      "Localized Indonesia/Malaysia customer flows",
+      "Performance-focused frontend delivery",
+    ],
+    usedInProjects: ["Lion Parcel Public Website SSR"],
+  },
+  {
     name: "Vue.js",
     category: "Frontend",
     aliases: ["vue", "vuejs", "vue.js", "vue 2", "vue 3"],
     explanation:
-      "Vue is important in Nicholas's experience because it appears in both early CRM work and current enterprise micro-frontend systems.",
+      "Vue is important in Nicholas's experience because it appears in early CRM work, enterprise micro-frontend systems, and Nuxt 3 SSR public website delivery.",
     usedFor: [
       "CRM interfaces",
       "Enterprise internal modules",
       "Micro-frontend delivery with Vue 3 and Vite",
+      "Nuxt 3 SSR public website development",
     ],
-    usedInProjects: ["Marketa Chat", "AP2T / ACMT / RTR"],
+    usedInProjects: [
+      "Marketa Chat",
+      "AP2T / ACMT / RTR",
+      "Lion Parcel Public Website SSR",
+    ],
   },
   {
     name: "TypeScript",
@@ -152,6 +182,7 @@ export const stackKnowledge: StackKnowledge[] = [
       "Reducing runtime mistakes in multi-module apps",
     ],
     usedInProjects: [
+      "Lion Parcel Public Website SSR",
       "Real Estate Management",
       "Amani Supplier",
       "QC Mobile",
@@ -284,6 +315,41 @@ export const stackKnowledge: StackKnowledge[] = [
 ];
 
 export const projectTraining: ProjectTraining[] = [
+  {
+    name: "Lion Parcel Public Website SSR",
+    aliases: [
+      "lion parcel",
+      "lionparcel",
+      "lionparcel.com",
+      "lion parcel ssr",
+      "lion parcel nuxt",
+      "public website ssr",
+      "nuxt ssr",
+      "news media coverage",
+      "media coverage",
+    ],
+    summary:
+      "A Nuxt 3 SSR migration for Lion Parcel's public website, lionparcel.com, focused on SEO-ready public pages, content delivery, i18n, performance, and maintainable customer-facing flows.",
+    domain: "Public logistics website and customer-facing content",
+    responsibilities: [
+      "Developing SSR-ready public website sections in the Nuxt 3 codebase.",
+      "Built and mounted news/media coverage sections and reusable brand logo marquee components.",
+      "Updated public navigation, corporate contact flows, Malaysia copy/assets, and localized customer-facing content.",
+      "Handled QA-driven production fixes across OTP resend behavior, agent wording, contact data, and public page copy.",
+    ],
+    stackRole: [
+      "Nuxt 3 and Vue 3 for server-rendered public website pages.",
+      "TypeScript and Pinia for safer frontend structure and state management.",
+      "Nuxt i18n for Indonesia and Malaysia content paths.",
+      "Sitemap, robots, SEO metadata, Nuxt Image, Partytown, and compression tooling for search and performance needs.",
+      "Server API routes and composables for connecting public pages to Lion Parcel APIs.",
+    ],
+    highlights: [
+      "The project is the SSR development track for the public Lion Parcel website.",
+      "Work is centered on SEO, performance, content-heavy pages, localization, and production reliability.",
+      "Recent contributions include WEBLP news/media coverage work, navbar news entry, Malaysia content fixes, and corporate contact updates.",
+    ],
+  },
   {
     name: "Real Estate Management",
     aliases: ["rem", "real estate management", "real estate", "developer operations"],

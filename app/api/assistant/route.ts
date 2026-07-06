@@ -397,12 +397,13 @@ function formatStackAnswer(question: string, stackSummary: string[]) {
 
   const strongestStacks = [
     "TypeScript for safer frontend/backend contracts.",
+    "Nuxt 3/Vue 3 SSR for public website, SEO, i18n, and performance-focused routes.",
     "React/Next.js and Vue for CRM, admin, dashboard, and enterprise frontend work.",
     "Node.js/Express, NestJS, and Golang for APIs and backend services.",
     "PostgreSQL, GCP, SSE, Socket, and Firebase for data, cloud, and real-time flows.",
   ];
 
-  return `Nicholas' main tech stack:\n${formatList(stackSummary)}\n\nStrongest areas:\n${formatList(strongestStacks)}\n\nFor more detail, ask about a specific technology such as Next.js, PostgreSQL, SSE, React Native, or Module Federation.`;
+  return `Nicholas' main tech stack:\n${formatList(stackSummary)}\n\nStrongest areas:\n${formatList(strongestStacks)}\n\nFor more detail, ask about a specific technology such as Nuxt 3, Next.js, PostgreSQL, SSE, React Native, or Module Federation.`;
 }
 
 function formatProjectAnswer(question: string, coreProjects: string[]) {
@@ -417,7 +418,7 @@ function formatProjectAnswer(question: string, coreProjects: string[]) {
     return `${relevantProject.name} is a ${relevantProject.type}. ${relevantProject.description}\n\nStack: ${relevantProject.stack.join(", ")}.`;
   }
 
-  return `Main projects on Nicholas' portfolio:\n${formatList(coreProjects)}\n\nOverall, the work is strongest around real estate operations, CRM, payment/material tracking, mobile inspection, chat CRM, and enterprise micro-frontends.`;
+  return `Main projects on Nicholas' portfolio:\n${formatList(coreProjects)}\n\nOverall, the work is strongest around public SSR websites, real estate operations, CRM, payment/material tracking, mobile inspection, chat CRM, and enterprise micro-frontends.`;
 }
 
 function formatWebsiteStructureAnswer() {
@@ -480,7 +481,7 @@ function getLocalIntents(): FaqIntent[] {
       ],
       answer: () => ({
         answer:
-          `Nicholas Fortune is a Full Stack Engineer from Tangerang, Indonesia. He focuses on CRM, real-time systems, mobile apps, backend APIs, micro-frontends, and enterprise operational platforms.\n\nHe currently works as ${currentRole.role} at ${currentRole.company}, with lead full-stack experience at Amani Group Indonesia and HappyHomes.`,
+          `Nicholas Fortune is a Full Stack Engineer from Tangerang, Indonesia. He focuses on public SSR websites, CRM, real-time systems, mobile apps, backend APIs, micro-frontends, and enterprise operational platforms.\n\nHe currently works as ${currentRole.role} at ${currentRole.company}, with lead full-stack experience at Amani Group Indonesia and HappyHomes.`,
         actions: getSuggestedActions("contact"),
       }),
     },
@@ -500,7 +501,7 @@ function getLocalIntents(): FaqIntent[] {
         "pekerjaan",
       ],
       answer: () => ({
-        answer: `Nicholas' recent experience:\n${formatList(recentExperience)}\n\nHis recurring work areas are CRM, real estate operational platforms, mobile QC, chat CRM, reporting, and enterprise micro-frontends.`,
+        answer: `Nicholas' recent experience:\n${formatList(recentExperience)}\n\nHis recurring work areas are public SSR websites, CRM, real estate operational platforms, mobile QC, chat CRM, reporting, and enterprise micro-frontends.`,
         actions: [
           { label: "Lihat LinkedIn", href: profileLinks.linkedin, external: true },
           { label: "Download CV", href: cvFiles.pdf, download: true },
@@ -528,6 +529,12 @@ function getLocalIntents(): FaqIntent[] {
         "tools",
         "react",
         "next",
+        "nuxt",
+        "ssr",
+        "server-side rendering",
+        "server side rendering",
+        "seo",
+        "pinia",
         "vue",
         "node",
         "nestjs",
@@ -598,6 +605,15 @@ function getLocalIntents(): FaqIntent[] {
         "ap2t",
         "acmt",
         "rtr",
+        "lion",
+        "lion parcel",
+        "lionparcel",
+        "lionparcel.com",
+        "nuxt",
+        "ssr",
+        "public website",
+        "media coverage",
+        "news",
       ],
       answer: (question) => ({
         answer: formatProjectAnswer(question, coreProjects),
